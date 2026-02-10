@@ -8,22 +8,19 @@
 
 import { useActionState } from "react";
 import { loginUser } from "@/components/LoginForm/actions";
+import type { LoginState } from "@/types/login";
 
-type State = {
-    values: { email: string; password: string };
-    errors: Partial<Record<"email" | "password" | "form", string>>;
-};
-
-const initialState: State = {
+const initialState: LoginState = {
     values: { email: "", password: "" },
     errors: {},
 };
 
 export default function LoginForm() {
-    const [state, formAction, isPending] = useActionState<State, FormData>(
+    const [state, formAction, isPending] = useActionState<LoginState, FormData>(
         loginUser,
         initialState
     );
+    console.log(state)
 
     return (
         //automatisk konverteret fra et get post til et post request, 
@@ -32,11 +29,12 @@ export default function LoginForm() {
         // og data ville blive sendt som query params. - så det er synligt i inspector og 
         // url, og ikke egnet til følsomme data som login info.
 
-        <form action={formAction}> 
+        <form action={formAction} noValidate> 
             <div>
                 <label htmlFor="email">Email</label>
                 <input id="email" type="email" name="email" defaultValue={state.values.email} />
-                {state.errors.email && <p>{state.errors.email}</p>}
+                {state.errors.email && <p>{state.errors.email}</p>} 
+                {/* optional chaning */}
             </div>
 
             <div>
@@ -46,8 +44,8 @@ export default function LoginForm() {
             </div>
 
             {state.errors.form && <p>{state.errors.form}</p>}
-
-            <button type="submit" disabled={isPending}>
+            
+            <button type="submit" disabled={isPending} className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400">
                 {isPending ? "Logger ind..." : "Log ind"}
             </button>
         </form>
