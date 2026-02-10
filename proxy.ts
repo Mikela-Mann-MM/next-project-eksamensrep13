@@ -13,5 +13,5 @@ export function proxy(request: NextRequest) {
 // export default function proxy(request: NextRequest) { ... }
  
 export const config = {
-  matcher: ['/secret/:path*'], //hvis flere sider ['/secret', '/secret/andre'] skal beskyttes, bruges :path* for at matche alle underveje
+  matcher: ['/secret/:path*', '/events/:path*'], //hvis flere sider ['/secret', '/secret/andre'] skal beskyttes, bruges :path* for at matche alle underveje
 }
