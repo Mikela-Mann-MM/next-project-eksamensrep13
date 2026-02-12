@@ -19,6 +19,8 @@ export default async function BlogDetailPage({
     );
   }
 
+  if (!post.data) return notFound();
+
   return (
     <main>
       <article>
