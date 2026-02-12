@@ -5,6 +5,15 @@ export default async function BlogPage() {
 
     const posts = await getAllBlogPosts()
 
+    if (posts.succes === false) {
+     return (
+        <main>
+            <h1>Oops, I did a boo boo</h1>
+            <p>{posts.message}</p>
+        </main>
+     );      
+    }
+
     return (
         <main>
 

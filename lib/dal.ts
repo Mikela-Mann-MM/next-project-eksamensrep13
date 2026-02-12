@@ -10,6 +10,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 export async function getAllEvents() {
     const cookieStore = await cookies();
@@ -68,13 +69,37 @@ export async function getAllBlogPosts(): Promise<{
 // og de skal returnere JSX eller null, som kan renderes i browseren, mens en server action kan returnere data eller udføre handlinger uden at skulle returnere JSX.
 
 export async function getBlogPostById(id: string): Promise<BlogPost> {
-    if(!id) {
-        throw new Error({message: 'ID is required to fetch blog post'});
-    }
-    if (isNaN(Number(id))) {
-        const response = await fetch(`http://localhost:4000/posts/${id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch blog post');
+    try {
+        if (!id) {
+            throw new Error("Missing ID");
         }
-        return await response.json();
+
+        if (!/^\d+$/.test(id)) {
+            throw new Error("Incorrect ID format");
+        }
+
+        const response = await fetch(`http://localhost:4000/posts/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch blog post");
+        }
+if(response.status !== 404) {
+            return notFound();
+        }
+
+        if (response.status !== 200) {
+            throw new Error({message: response.statusText })
+        }
+
+        if (response.headers.get("content-type")?.includes("application/json")) {
+            return await response.json();
+        }
+
+        throw new Error("Response is not JSON");
+
+    } catch (error) {
+        console.error("getBlogPostById error:", error);
+        throw error; // vigtigt: vi re-thrower, så caller kan håndtere det
     }
+}
+}

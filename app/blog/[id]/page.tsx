@@ -8,12 +8,16 @@ export default async function BlogDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params; // id findes først her
+  const post = await getBlogPostById(String(id));
 
-  const numericId = Number(id);
-  if (Number.isNaN(numericId)) notFound();
-
-  const post = await getBlogPostById(String(numericId));
-  // evt: if (!post) notFound();
+  if (post.succes === false) {
+    return (
+      <main>
+        <h1>Oops, I did a boo boo</h1>
+        <p>{post.message}</p>
+      </main>
+    );
+  }
 
   return (
     <main>
